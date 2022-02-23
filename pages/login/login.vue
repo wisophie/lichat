@@ -138,7 +138,7 @@
 		width: 520rpx;
 		height: 96rpx;
 		background: $uni-color-primary;
-		box-shadow: 0 50rpx 32rpx -36rpx rgba(46, 255, 231, 0.4);
+		box-shadow: 0 50rpx 32rpx -36rpx rgba(140, 157, 158, 0.4);
 		border-radius: 48rpx;
 		font-size: 32rpx;
 		font-weight: 500;

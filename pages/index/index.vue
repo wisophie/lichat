@@ -17,6 +17,7 @@
 			</view>
 		</view>
 		<view class="main">
+			<navigator url="../friendrequest/friendrequest?id=bbb" >
 			<view class="friends">
 				<view class="friends-list">
 					<view class="friends-list-l">
@@ -34,6 +35,7 @@
 					</view>
 				</view>
 			</view>
+			</navigator>
 			<view class="friends">
 				<view class="friends-list" v-for="(item,index) in friends" :key="item.id">
 					<view class="friends-list-l">
@@ -99,7 +101,7 @@
 		padding-bottom:$uni-spacing-col-base ;
 	}
 	.top-bar{
-		background: rgba(255,255,255,0.96);
+		background: rgba(244,244,244,0.96);
 		box-shadow: 0px 1px 0px 0px rgba(0, 0, 0, 0.1);
 	}
 

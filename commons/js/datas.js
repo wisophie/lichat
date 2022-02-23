@@ -75,5 +75,66 @@ export default{
 			},
 		];
 		return friendarr;
+	},
+	message:function(){
+		let msgs=[
+			{
+				id:'a',
+				imgurl:'one.png',
+				message:'因为scoped的原因,所以改变不了全局的page样式。可以在添加一行 style样式,单独修改page样式,其他样式保持不变',
+				types:0,
+				time:new Date()-1000,
+				tip:0,
+			},
+			{
+				id:'a',
+				imgurl:'one.png',
+				message:'LG展示了自研的IPS Black屏幕技术，根据官方的说法，它的作用就是能提高IPS面板的对比度',
+				types:0,  //内容类型
+				time:new Date()-1000*16,
+				tip:1,
+			},
+			{
+				id:'b',
+				imgurl:'two.png',
+				message:'LG展示了自研的板的对比度',
+				types:0,
+				time:new Date()-1000*60,
+				tip:2,
+			},
+			{
+				id:'a',
+				imgurl:'one.png',
+				message:'LG展示了自研的',
+				types:0,
+				time:new Date()-1000*60*36,
+				tip:3,
+			},
+			{
+				id:'b',
+				imgurl:'two.png',
+				message:'one.png',
+				types:1,
+				time:new Date()-1000*60*40,
+				tip:4,
+			},
+			{
+				id:'b',
+				imgurl:'two.png',
+				message:'si.jpg',
+				types:1,
+				time:new Date()-1000*60*57,
+				tip:5,
+			},
+			{
+				id:'a',
+				imgurl:'one.png',
+				message:'wu.jpg',
+				types:1,
+				time:new Date()-11000*600*58,
+				tip:6,
+			},
+		];
+		return msgs
 	}
 }
