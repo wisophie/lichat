@@ -52,7 +52,7 @@
 <style lang="scss">
 .emoji{
 	width: 100%;
-	height: 460rpx;
+	// height: 460rpx;
 	padding: 16rpx 12rpx 180rpx 12rpx;
 	box-sizing: border-box;
 	overflow:hidden;

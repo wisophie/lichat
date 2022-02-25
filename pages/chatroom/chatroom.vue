@@ -128,16 +128,18 @@
 				let data = {
 					id:'b',
 					imgurl:'../../static/images/img/one.png',
-					message:e,
-					types:0,
+					message:e.message,
+					types:e.types,
 					time:new Date(),
 					tip:len,
 				};
 				this.msgs.push(data);
 				this.$nextTick(function(){
 					this.sintoview='msg'+len;
-						
 					})
+				if(e.types==1){
+					this.imgMsg.push(e.message);
+				}
 			},
 			//接收高度
 			heights:function(e){
@@ -240,7 +242,8 @@
 				.msg-text {
 					margin-right: 16rpx;
 					// background-color: #ffcf3d;
-					background-color: #ffb183;
+					// background-color: #ffb183;
+					background-color: #67b6ff;
 					border-radius: 20rpx 0 20rpx 20rpx;
 				}
 				.msg-img{

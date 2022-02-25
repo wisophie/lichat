@@ -17,7 +17,7 @@
 			</view>
 			<view class="tips">输入用户名或密码错误</view>
 		</view>
-		<view class="submit" @tap="login">登录</view>
+		<view class="submit" @tap="testFunc">登录</view>
 	</view>
 </template>
 
@@ -31,6 +31,18 @@
 		},
 		methods: {
 			//后台链接测试
+			testFunc:function(){
+				uni.request({
+					url:'http://192.168.2.2:3000/mail',
+					data:{
+						mail:this.username,
+					},
+					method:'POST',
+					success:(data)=>{
+						console.log(data);
+					}
+				})
+			},
 			//跳转到注册页面
 			toSignUp:function(){
 				uni.navigateTo({
