@@ -1,8 +1,8 @@
 <template>
 	<view class="content">
 		<view class="top-bar">
-			<navigator url="../userhome/userhome?id=aaa" hover-class="none" class="top-bar-left" @tap="">
-				<image src="../../static/images/img/111.png"></image>
+			<navigator :url="'../userhome/userhome?id='+uid" hover-class="none" class="top-bar-left" @tap="">
+				<image :src="imgurl"></image>
 			</navigator>
 			<view class="top-bar-center">
 				<image src="../../static/images/img/two.png"></image>
@@ -65,10 +65,17 @@
 		data() {
 			return {
 				friends: [],
+				uid:'',
+				imgurl:'',
+				token:'',
 			}
+		},
+		onShow() {
+			this.getStorages();
 		},
 		onLoad() {
 			this.getFriends();
+			
 		},
 		methods: {
 			tosearch: function() {
@@ -78,6 +85,25 @@
 				},
 			changeTime:function(date){
 				return myfunction.dateTime(date)
+			},
+			//获取缓存数据
+			getStorages:function(){
+				try {
+				   const value = uni.getStorageSync('user');
+					if(value){
+						this.uid=value.id;
+						this.imgurl=this.serverUrl+'/user/'+value.imgurl;
+						this.token =value.token;
+					}else{
+						//没有用户缓存,到登录页面
+						uni.navigateTo({
+						    url: '../login/login'
+						});
+					}
+				} catch (e) {
+				    // error
+					console.log('数据存储出错')
+				}
 			},
 			getFriends: function() {
 				this.friends = datas.friends();
@@ -101,7 +127,7 @@
 		padding-bottom:$uni-spacing-col-base ;
 	}
 	.top-bar{
-		background: rgba(244,244,244,0.96);
+		background: rgba(255,255,255,0.96);
 		box-shadow: 0px 1px 0px 0px rgba(0, 0, 0, 0.1);
 	}
 

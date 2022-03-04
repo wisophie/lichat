@@ -10,26 +10,25 @@
 			</view>
 		</view>
 		<view class="main">
-			<view class="search-user">
+			<view class="search-user result">
 				<view class="title">用户</view>
-				<view class="listuser">
-					<image src="" ></image>
+				<view class="list user">
+					<image src="../../static/images/img/five.png" ></image>
 					<view class="names">
 						<view class="name">大力出奇迹</view>
 						<view class="email">sfsf@qq.com</view>
 					</view>
-					<view class="right-bt">发送
-					</view>
+					<view class="right-bt send">发消息</view>
 				</view>
-				<view class="listuser">
-					<image src="" ></image>
+				<view class="list user">
+					<image src="../../static/images/img/three.png" ></image>
 					<view class="names">
 						<view class="name">大力出奇迹</view>
 						<view class="email">sfsf@qq.com</view>
 					</view>
-					<view class="right-bt">发送
-					</view>
+					<view class="right-bt add">加好友</view>
 				</view>
+				
 			</view>
 		</view>
 		
@@ -49,6 +48,9 @@
 				    delta:1
 				});
 			},
+			search:function(){
+				
+			}
 			
 		}
 	}
@@ -84,6 +86,63 @@
 		}
 	}
 	.main{
-		
+		padding:88rpx $uni-spacing-col-base;
+		.result{
+			padding-top:32rpx;
+			.title{
+				font-size: 44rpx;
+				font-weight: 600;
+				color:$uni-text-color;
+				line-height: 60rpx;
+			}
+			.list{
+				// border:1px solid red;
+				padding:20rpx;
+				// width: 100%;
+				height: 80rpx;
+				image{
+					float:left;
+					width: 80rpx;
+					height: 80rpx;
+					border-radius: 20rpx;
+				}
+			}
+			.names{
+				float:left;
+				padding-left:$uni-spacing-col-base ;
+				// border:1px solid red;
+			}
+			.name{
+				font-size: 36rpx;
+				color: $uni-text-color;
+				line-height: 50rpx;
+				
+			}
+			.email{
+				font-size:$uni-font-size-sm;
+				color:$uni-text-color ;
+				line-height: 28rpx;
+			}
+			.right-bt{
+				float:right;
+				width: 120rpx;
+				height: 48rpx;
+				
+				border-radius: 24rpx;
+				font-size:$uni-font-size-sm;
+				
+				line-height: 48rpx;
+				text-align: center;
+				margin-top: 16rpx;
+			}
+			.send{
+				background:$uni-color-primary;
+				color:$uni-text-color ;
+			}
+			.add{
+				background:rgba(74,170,255,0.1);
+				color:#00aaff;
+			}
+		}
 	}
 </style>

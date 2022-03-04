@@ -243,7 +243,7 @@
 					margin-right: 16rpx;
 					// background-color: #ffcf3d;
 					// background-color: #ffb183;
-					background-color: #67b6ff;
+					background-color: $uni-color-primary;
 					border-radius: 20rpx 0 20rpx 20rpx;
 				}
 				.msg-img{

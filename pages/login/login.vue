@@ -6,18 +6,18 @@
 			</view>
 		</view>
 		<view class="logo">
-			<image src="../../static/images/img/enterprise.jpg" ></image>
+			<image src="../../static/images/img/enterprise.jpg" @tap="testFun1"></image>
 		</view>
 		<view class="main">
 			<view class="title">登录</view>
 			<view class="slogan">您好,欢迎来到lichat!</view>
 			<view class="inputs">
-				<input type="text" @blur="getUser" placeholder="用户名/邮箱" placeholder-style="color:#ccc"/>
-				<input type="password" @blur="getPwd" placeholder="密码" placeholder-style="color:#ccc"/>
+				<input type="text" v-model="username" placeholder="用户名/邮箱" placeholder-style="color:#ccc"/>
+				<input type="password" v-model="password" placeholder="密码" placeholder-style="color:#ccc"/>
 			</view>
-			<view class="tips">输入用户名或密码错误</view>
+			<view class="tips" :style="{display:wrong}">输入用户名或密码错误</view>
 		</view>
-		<view class="submit" @tap="testFunc">登录</view>
+		<view class="submit" @tap="login">登录</view>
 	</view>
 </template>
 
@@ -25,17 +25,52 @@
 	export default {
 		data() {
 			return {
-				username:'',
-				password:''
+				username:'小明',
+				password:'12345678',
+				token:'',
+				wrong:'none',
+			}
+		},
+		onLoad:function(e){
+			if(e.username){
+				this.username=e.username;
+				uni.showToast({
+				    title: '注册成功请登陆',
+					icon:'none',
+				    duration: 2000
+				});
 			}
 		},
 		methods: {
 			//后台链接测试
 			testFunc:function(){
 				uni.request({
-					url:'http://192.168.2.2:3000/mail',
+					url:'http://192.168.2.2:3000/login/match',
 					data:{
-						mail:this.username,
+						// id:'621a46033d2bf13559c608e0',
+						data:'严大',
+						// username:'严大试试',
+						// email:'3333343@qq.com',
+						pwd:'12345678',
+						
+					},
+					method:'POST',
+					success:(data)=>{
+						this.token=data.data.back.token;
+						console.log(data);
+					}
+				})
+			},
+			testFun1:function(){
+				uni.request({
+					url:'http://192.168.2.2:3000/friend/updatefriendstate',
+					data:{
+						// id:'621cdc1b886b25a22a1976b8',
+						uid:'621cdc1b886b25a22a1976b8',    //小明
+						fid:'621cdc8a886b25a22a1976be',
+						// msg:'申请好友6',
+						//type:'sex',
+						//pwd:'123456',
 					},
 					method:'POST',
 					success:(data)=>{
@@ -49,19 +84,49 @@
 				    url: '../signup/signup'
 				});
 			},
-			//获取用户名邮箱
-			getUser:function(e){
-				this.username=e.detail.value;
-			},
-			//获取密码
-			getPwd:function(e){
-				this.password=e.detail.value;
-			},
 			//登录提交
 			login:function(){
-				
 				if(this.username&&this.password)
-				console.log('tijio')
+				uni.request({
+					url:this.serverUrl+'/login/match',
+					data:{
+						data:this.username,
+						pwd:this.password,
+					},
+					method:'POST',
+					success:(data)=>{
+						console.log(data)
+						let status=data.data.status;
+						if(status==200){
+							//登录成功
+							let res=data.data.back;
+							console.log(data)
+							this.wrong='none';
+							//存储用户信息
+							try {
+							    uni.setStorageSync('user', {'id':res.id,'username':res.username,'imgurl':res.imgurl,'token':res.token});
+								uni.setStorageSync('token',res.token);
+							} catch (e) {
+							    // error
+								console.log('数据存储出错')
+							}
+							//跳转到首页
+							uni.navigateTo({
+							    url: '../index/index',
+							});
+						}else if(status==400){
+							//用户匹配失败
+							this.wrong='block';
+							this.password='';
+						}else if(status==500){
+							uni.showToast({
+							    title: '服务器出错',
+								icon:'none',
+							    duration: 2000
+							});
+						}
+					}
+				})
 			}
 			
 

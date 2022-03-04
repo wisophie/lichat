@@ -13,12 +13,12 @@
 			<view class="slogan">您好,欢迎注册lichat!</view>
 			<view class="inputs">
 				<view class="inputs-div">
-					<input type="text" @input="getUser" placeholder="请输入用户名" placeholder-style="color:#ccc"/>
+					<input type="text" @blur="matchUser" placeholder="请输入用户名" placeholder-style="color:#ccc"/>
 					<view class="ocupy" v-if="userocupy">用户名已占用</view>
 					<image src="../../static/images/sign/right1.png" class="ok" v-if="isuser" ></image>
 				</view>
 				<view class="inputs-div">
-					<input type="text" @input="isEmail" placeholder="请输入邮箱" placeholder-style="color:#ccc"/>
+					<input type="text" @blur="isEmail" placeholder="请输入邮箱" placeholder-style="color:#ccc"/>
 					<view class="ocupy" v-if="emailocupy">邮箱已占用</view>
 					<view class="einvalid" v-if="einvalid">邮箱无效</view>
 					<image src="../../static/images/sign/right1.png" class="ok" v-if="isemail" ></image>
@@ -32,7 +32,7 @@
 			</view>
 			
 		</view>
-		<view :class="[{submit:isok},{submit1:!isok}]">注册</view>
+		<view :class="[{submit:isok},{submit1:!isok}]" @tap="signUp">注册</view>
 	</view>
 </template>
 
@@ -41,8 +41,8 @@
 		data() {
 			return {
 				type:'password',
-				isuser:true,
-				isemail:true,
+				isuser:false,
+				isemail:false,
 				look:false,
 				einvalid:false,
 				userocupy:false,
@@ -80,17 +80,91 @@
 				if(this.email.length>0){
 					if(reg.test(this.email)){
 						this.einvalid=false
-						this.isemail=true
+						//后端验证邮箱是否占用
+						this.matchMail();
 					}else{
-						this.einvalid=true
+						this.einvalid=true;
+						this.emailocupy=false;
+						this.isemail=false;
 					}
+				}else{
+					this.einvalid=false;
+					this.emailocupy=false;
+					this.isemail=false;
 				}
 				this.isOk()
 			},
-			//获取用户名邮箱
-			getUser:function(e){
+			//后端匹配邮箱
+			matchMail:function(){
+					uni.request({
+						url:this.serverUrl+'/signup/judge',
+						data:{
+							data:this.email,
+							type:'email',
+						},
+						method:'POST',
+						success:(data)=>{
+							let status=data.data.status;
+							if(status==200){
+								let res=data.data.result;
+								if(res>0){
+								//表示邮箱已存在
+								this.emailocupy=true;
+								this.isemail=false;
+								}else{
+									this.emailocupy=false;
+									this.isemail=true;
+								}
+								this.isOk()
+							}else if(status==500){
+								uni.showToast({
+								    title: '服务器出错',
+									icon:'none',
+								    duration: 2000
+								});
+							}
+						}
+					})
+			},
+			//匹配用户名
+			matchUser:function(e){
 				this.username=e.detail.value;
-				this.isOk()
+				if(this.username.length>0){
+					uni.request({
+						url:this.serverUrl+'/signup/judge',
+						data:{
+							data:this.username,
+							type:'name',
+						},
+						method:'POST',
+						success:(data)=>{
+							let status=data.data.status;
+							if(status==200){
+								let res=data.data.result;
+								if(res>0){
+								//表示用户已存在
+								this.userocupy=true;
+								this.isuser=false;
+								}else{
+									this.userocupy=false;
+									this.isuser=true;
+								}
+								this.isOk()
+							}else if(status==500){
+								uni.showToast({
+								    title: '服务器出错',
+									icon:'none',
+								    duration: 2000
+								});
+							}
+						}
+					})
+				}else{
+					this.userocupy=false;
+					this.isuser=false;
+					this.isOk()
+				}
+				
 			},
 			//获取密码
 			getPwd:function(e){
@@ -105,6 +179,40 @@
 					this.isok=false
 					}
 				
+			},
+			// signUp:function(){
+			// 	uni.navigateTo({
+			// 	    url: '../login/login?username='+this.username
+			// 	});
+			// },
+			//注册提交
+			signUp:function(){
+				if(this.isOk){
+					uni.request({
+						url:this.serverUrl+'/signup/add',
+						data:{
+							username:this.username,
+							email:this.email,
+							pwd:this.password,
+						},
+						method:'POST',
+						success:(data)=>{
+							let status=data.data.status;
+							if(status==200){
+								//注册成功跳转到登陆页并填写用户名
+								uni.navigateTo({
+								    url: '../login/login?username='+this.username
+								});
+							}else if(status==500){
+								uni.showToast({
+								    title: '服务器出错',
+									icon:'none',
+								    duration: 2000
+								});
+							}
+						}
+					})
+				}
 			}
 		}
 	}
