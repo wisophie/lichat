@@ -6,7 +6,7 @@
 			</view>
 		</view>
 		<view class="logo">
-			<image src="../../static/images/img/enterprise.jpg" @tap="testFun1"></image>
+			<image src="../../static/images/img/333.jpg" @tap="testFun1"></image>
 		</view>
 		<view class="main">
 			<view class="title">登录</view>
@@ -39,6 +39,13 @@
 					icon:'none',
 				    duration: 2000
 				});
+			}else if(e.name){
+				this.username=e.name;
+				uni.showToast({
+				    title: '信息过期请重新登陆',
+					icon:'none',
+				    duration: 2000
+				});
 			}
 		},
 		methods: {
@@ -63,14 +70,15 @@
 			},
 			testFun1:function(){
 				uni.request({
-					url:'http://192.168.2.2:3000/friend/updatefriendstate',
+					url:'http://192.168.2.2:3000/index/getfriends',
 					data:{
 						// id:'621cdc1b886b25a22a1976b8',
 						uid:'621cdc1b886b25a22a1976b8',    //小明
-						fid:'621cdc8a886b25a22a1976be',
+						// fid:'621cdc8a886b25a22a1976be',
 						// msg:'申请好友6',
 						//type:'sex',
 						//pwd:'123456',
+						state:0,
 					},
 					method:'POST',
 					success:(data)=>{
@@ -95,12 +103,10 @@
 					},
 					method:'POST',
 					success:(data)=>{
-						console.log(data)
 						let status=data.data.status;
 						if(status==200){
 							//登录成功
 							let res=data.data.back;
-							console.log(data)
 							this.wrong='none';
 							//存储用户信息
 							try {
@@ -111,7 +117,7 @@
 								console.log('数据存储出错')
 							}
 							//跳转到首页
-							uni.navigateTo({
+							uni.switchTab({
 							    url: '../index/index',
 							});
 						}else if(status==400){
@@ -169,16 +175,18 @@
 	// }
 	.logo {
 		text-align: center;
+		// border:1px solid red;
 		image{
-			padding-top: 256rpx;
-			width: 300rpx;
-			height: 200rpx;
+			padding-top: 100rpx;
+			width: 500rpx;
+			height: 400rpx;
 			margin:0 auto;
+			// border:1px solid red;
 		}
 		
 	}
 	.main{
-		padding: 54rpx $uni-spacing-row-lg 120rpx;
+		padding: 10rpx $uni-spacing-row-lg 120rpx;
 		// width: 100%;
 		// border:1px solid red;
 		.title{

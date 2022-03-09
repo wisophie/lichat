@@ -29,16 +29,16 @@
 			</view>
 		</view>
 		<view class="button-bar">
-			<view class="btn1 btn" @tap="addFriendAnimation" v-if="relation==2">加为好友</view>
+			<view class="btn1 btn" @tap="addFriendBtn" v-if="relation==2">加为好友</view>
 			<view class="btn1 btn" v-if="relation==1">发送消息</view>
 		</view>
 		<view class="add-misg" :style="{height:addHeight+'px',bottom:-+addHeight+'px'}" :animation="animationData">
 			<view class="name">{{user.name}}</view>
-			<textarea :value="myname+'请求加为好友'" class="add-main" maxlength="120" />
+			<textarea v-model="msg" class="add-main" maxlength="120" />
 		</view>
 		<view class="add-bt button-bar" :animation="animationData1">
 			<view class="close btn" @tap="addFriendAnimation">取消</view>
-			<view class="send btn">发送</view>
+			<view class="send btn" @tap="addFriendSubmit">发送</view>
 		</view>
 	</view>
 </template>
@@ -57,6 +57,7 @@
 				seximg: '../../static/images/userhome/female.png',
 				sexBg: 'rgba(255,93,91,1)',
 				addHeight: '',
+				msg:'',     //请求信息
 				animationData: {},
 				animationData1: {},
 				animationData2: {},
@@ -88,7 +89,7 @@
 					if (value) {
 						this.uid = value.id;
 						this.token = value.token;
-						this.myname = value.name;
+						this.myname = value.username;
 					} else {
 						//没有用户缓存,到登录页面
 						uni.navigateTo({
@@ -132,6 +133,11 @@
 								title: '服务器出错',
 								icon: 'none',
 								duration: 2000
+							});
+						}else if (status == 300) {
+							//token过期
+							uni.navigateTo({
+							    url: '../login/login?name='+this.myname,
 							});
 						}
 					}
@@ -180,6 +186,11 @@
 									icon: 'none',
 									duration: 2000
 								});
+							}else if (status == 300) {
+								//token过期
+								uni.navigateTo({
+								    url: '../login/login?name='+this.myname,
+								});
 							}
 						}
 					})
@@ -203,20 +214,26 @@
 								//如果存在就替换
 								this.markname = res.markname;
 							}
-						}
-						uni.showToast({
-							title: '服务器出错',
-							icon: 'none',
-							duration: 2000
-						});
+						}else if(status == 500){
+							uni.showToast({
+								title: '服务器出错',
+								icon: 'none',
+								duration: 2000
+							});
+						}else if(status == 300) {
+								//token过期
+								uni.navigateTo({
+								    url: '../login/login?name='+this.myname,
+								});
+							}
 					}
 				})
 			},
 			getElementStyle: function() {
 				const query = uni.createSelectorQuery().in(this);
 				query.select('.bg').boundingClientRect(data => {
-					console.log("得到布局位置信息" + JSON.stringify(data));
-					console.log("节点离页面顶部的距离为" + data.top);
+					// console.log("得到布局位置信息" + JSON.stringify(data));
+					// console.log("节点离页面顶部的距离为" + data.top);
 					this.addHeight = data.height - 186;
 				}).exec();
 			},
@@ -262,7 +279,53 @@
 				this.animationData3 = animation3.export()
 				this.animationData4 = animation4.export()
 
-			}
+			},
+			//添加好友按钮
+			addFriendBtn:function(fid){
+				this.fid=fid;
+				this.msg= this.myname+' 请求添加好友';
+				this.addFriendAnimation();
+			},
+			//确定添加好友
+			addFriendSubmit:function(){
+			    if(this.msg.length>0){
+					this.addFriendAnimation();
+					uni.request({
+						url: this.serverUrl + '/friend/applyfriend',
+						data: {
+							uid:this.uid,
+							fid:this.id,
+							token:this.token,
+							msg:this.msg,
+						},
+						method: 'POST',
+						success: (data) => {
+							let status = data.data.status;
+							if (status == 200) {
+								//好友
+								
+								uni.showToast({
+									title: '好友请求发送成功',
+									icon: 'none',
+									duration: 2000
+								});
+							}else if (status == 500) {
+								uni.showToast({
+									title: '服务器出错',
+									icon: 'none',
+									duration: 2000
+								});
+							}else if (status == 300) {
+								//token过期
+								uni.navigateTo({
+								    url: '../login/login?name='+this.myname,
+								});
+							}
+						}
+						
+					})
+				}
+			},
 		}
 	}
 </script>

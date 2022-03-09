@@ -1,7 +1,7 @@
 <template>
 	<view class="content">
 		<view class="top-bar">
-			<view class="top-bar-left" @tap="toLogin">
+			<view class="top-bar-left" @tap="backOne">
 				<image src="../../static/images/common/back.png" class="backimg"></image>
 			</view>
 		</view>
@@ -56,7 +56,7 @@
 		},
 		methods: {
 			//返回到登陆页面
-			toLogin:function(){
+			backOne:function(){
 				uni.navigateBack({
 				    delta:1
 				});

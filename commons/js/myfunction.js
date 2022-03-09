@@ -76,7 +76,7 @@ export default{
 		now=new Date(now)
 		var told=old.getTime();
 		var tnow=now.getTime();
-		if(told>(tnow+1000*60*5)){
+		if(tnow>(told+1000*60*5)){
 			return now;
 		}else return ''
 	},
@@ -101,4 +101,50 @@ export default{
 		
 		
 	},
+	//搜索延时作用函数
+	debounce(fn, t){
+	    let delay = t || 500;
+	    let timer;
+	   
+	    return function () {
+	        let args = arguments;
+	        if(timer){
+	            clearTimeout(timer);
+	        }
+	        timer = setTimeout(() => {
+	            timer = null;
+	            fn.apply(this, args);
+	        }, delay);
+	    }
+	},
+	
+	//排序
+	paixu:function(arr,obj,tip){
+		var s;
+		if(tip==0){
+			//降序排序
+			for(let i=1;i<arr.length;i++){
+				for(let j=i;j>0;j--){
+					if(arr[j][obj]>arr[j-1][obj]){
+						s=arr[j];
+						arr[j]=arr[j-1];
+						arr[j-1]=s
+					}
+				}
+			}
+			return arr;
+		}else if(tip==1){
+			//升序排序
+			for(let i=1;i<arr.length;i++){
+				for(let j=i;j>0;j--){
+					if(arr[j][obj]<arr[j-1][obj]){
+						s=arr[j];
+						arr[j]=arr[j-1];
+						arr[j-1]=s
+					}
+				}
+			}
+			return arr;
+		}
+	}
 }
