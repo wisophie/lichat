@@ -13,18 +13,19 @@
 			<view class="column heads">
 				<view class="row head">
 					<view class="title">头像</view>
-					<view class="user-head">
+					<view class="user-head" v-if="id==uid">
 						<image-cropper :src="tempFilePath" @confirm="confirm" @cancel="cancel"></image-cropper>
 						 <image class="user-img" :src="cropFilePath" @tap="upload"></image>
 					</view>
-					<view class="more">
+					<view class="more" v-if="id==uid">
 						<image src="../../static/images/common/more.png" mode="aspectFit"></image>
 					</view>
+					<image class="user-img" :src="cropFilePath" v-if="id!=uid"></image>
 				</view>
-				<view class="row" @tap="modify('签名',dataarr.sign,ispwd)">
+				<view class="row" @tap="modify('explain','签名',user.explain,ispwd)">
 					<view class="title">签名</view>
 					<view class="cont">
-						{{dataarr.sign}}
+						{{user.explain}}
 					</view>
 					<view class="more">
 						<image src="../../static/images/common/more.png" mode="aspectFit"></image>
@@ -33,15 +34,15 @@
 				<view class="row">
 					<view class="title">注册</view>
 					<view class="cont">
-						{{changeTime(dataarr.time)}}
+						{{changeTime(user.time)}}
 					</view>
 				</view>
 			</view>
 			<view class="column heads">
-				<view class="row" @tap="modify('昵称',dataarr.name,false)">
+				<view class="row" @tap="modify('name','昵称',user.name,false)">
 					<view class="title">昵称</view>
 					<view class="cont">
-						{{dataarr.name}}
+						{{user.name}}
 					</view>
 					<view class="more">
 						<image src="../../static/images/common/more.png" mode="aspectFit"></image>
@@ -50,45 +51,47 @@
 				<view class="row">
 					<view class="title">性别</view>
 					<view class="cont">
-						<picker @change="bindPickerChange" :value="index" :range="array">
+						<picker @change="bindPickerChange" :value="index" :range="array" v-if="id==uid">
 							<view class="uni-input">{{array[index]}}</view>
 						</picker>
+						<view class="uni-input" v-if="id!=uid">{{array[index]}}</view>
 					</view>
-					<view class="more">
+					<view class="more" v-if="id==uid">
 						<image src="../../static/images/common/more.png" mode="aspectFit"></image>
 					</view>
 				</view>
 				<view class="row">
 					<view class="title">生日</view>
 					<view class="cont">
-						<picker mode="date" :value="date" :start="startDate" :end="endDate" @change="bindDateChange">
+						<picker mode="date" :value="date" :start="startDate" :end="endDate" @change="bindDateChange" v-if="id==uid">
 							<view class="uni-input">{{date}}</view>
 						</picker>
+							<view class="uni-input" v-if="id!=uid">{{date}}</view>
 					</view>
-					<view class="more">
+					<view class="more" v-if="id==uid">
 						<image src="../../static/images/common/more.png" mode="aspectFit"></image>
 					</view>
 				</view>
-				<view class="row" @tap="modify('昵称',dataarr.name,false)">
+				<view class="row" @tap="modify('phone','电话',user.phone,false)">
 					<view class="title">电话</view>
 					<view class="cont">
-						sfsfsffsf
+						{{user.phone}}
 					</view>
 					<view class="more">
 						<image src="../../static/images/common/more.png" mode="aspectFit"></image>
 					</view>
 				</view>
-				<view class="row" @tap="modify('昵称',dataarr.name,true)">
+				<view class="row" @tap="modify('email','邮箱',user.email,true)">
 					<view class="title">邮箱</view>
 					<view class="cont">
-						{{dataarr.email}}
+						{{user.email}}
 					</view>
 					<view class="more">
 						<image src="../../static/images/common/more.png" mode="aspectFit"></image>
 					</view>
 				</view>
 			</view>
-			<view class="column heads">
+			<view class="column heads" v-if="id==uid" @tap="modify('pwd','密码','',true)">
 				<view class="row">
 					<view class="title">密码</view>
 					<view class="cont">
@@ -99,14 +102,13 @@
 					</view>
 				</view>
 			</view>
-			<view class="bt2">
-				退出登录
-			</view>
+			<view class="bt2" v-if="id==uid">退出登录</view>
+			<view class="bt2" v-if="id!=uid">删除好友</view>
 		</view>
 		<view class="modify" :style="{bottom:-+modifyHeight+'px'}" :animation="animationData">
 			<view class="modify-header">
 				<view class="close" @tap="modify">取消</view>
-				<view class="title">签名</view>
+				<view class="title">ddd</view>
 				<view class="define" @tap="modifySubmit">确定</view>
 			</view>
 			<view class="modify-main">
@@ -126,12 +128,20 @@
 				format: true
 			})
 			return {
-				dataarr:{
-					name:'小明',
-					sign:'沙发沙发上咋发山东粉丝啊啊啊舒服爽多少分沙发垫付sfsdfsdfdsfsfsf',
-					time:new Date(),
-					email:'464646@454.com'
-				},
+				id:'',
+				uid:'',
+				imgurl:'',
+				token:'',
+				myname:'',
+				user: {},
+				markname:'',
+				headimg:'',
+				// dataarr:{
+				// 	name:'小明',
+				// 	sign:'沙发沙发上咋发山东粉丝啊啊啊舒服爽多少分沙发垫付sfsdfsdfdsfsfsf',
+				// 	time:new Date(),
+				// 	email:'464646@454.com'
+				// },
 				array: ['男', '女', '未知'],
 				index: 0,
 				date: currentDate,
@@ -140,10 +150,11 @@
 				modifyTitle:'',
 				data:'修改的内容',
 				ispwd:false,
-				pwd:'',
+				pwd:undefined,
+				type:'',     //修改项
 				animationData: {},
 				isModify: false,
-				modifyHeight:'',
+				modifyHeight:'1000',
 			}
 		},
 		computed: {
@@ -158,7 +169,137 @@
 		onReady(){
 			this.getElementStyle();
 		},
+		onShow(){
+			this.getStorages();
+			this.getUser();
+			this.getMarkName();
+		},
+		onLoad(){
+			
+		},
 		methods: {
+			//获取缓存数据
+			getStorages:function(){
+				try {
+				   const value = uni.getStorageSync('user');
+				   const id = uni.getStorageSync('id');
+					if(value){
+						this.uid=value.id;
+						this.id=id;
+						this.imgurl=this.serverUrl+'/user/'+value.imgurl;
+						this.token =value.token;
+						this.myname = value.username;
+						// console.log(this.id)
+					}else{
+						//没有用户缓存,到登录页面
+						uni.navigateTo({
+						    url: '../login/login'
+						});
+					}
+				} catch (e) {
+				    // error
+					console.log('数据存储出错')
+				}
+			},
+			//获取用户信息
+			getUser: function() {
+				uni.request({
+					url: this.serverUrl + '/user/detail',
+					data: {
+						id: this.id,
+						token: this.token,
+					},
+					method: 'POST',
+					success: (data) => {
+						let status = data.data.status;
+						if (status == 200) {
+							let res = data.data.result;
+							//处理头像链接
+							this.cropFilePath = this.serverUrl + '/user/' + res.imgurl;
+						
+							//处理简介
+							if (typeof(res.explain)=='undefined') {
+								res.explain = '这个人很懒,什么都没有留下';
+							}
+							//处理生日
+							if (typeof(res.birth)=='undefined') {
+								this.date = '0000-00-00';
+							}else{
+								let birth = myfunction.detailTime1(res.birth)
+								this.date =birth;
+							}
+							//处理电话
+							if (typeof(res.phone)=='undefined') {
+								res.phone = '000';
+							}
+							//处理markname
+							if (this.markname.length == 0) {
+								this.markname = res.name;
+							}
+							this.sexJudge(res.sex);
+							this.user = res;
+							// console.log(res)
+						} else if (status == 500) {
+							uni.showToast({
+								title: '服务器出错',
+								icon: 'none',
+								duration: 2000
+							});
+						}else if (status == 300) {
+							//token过期
+							uni.navigateTo({
+							    url: '../login/login?name='+this.myname,
+							});
+						}
+					}
+				})
+			},
+			//获取好友昵称
+			getMarkName: function() {
+				if(this.id!=this.uid){
+					uni.request({
+						url: this.serverUrl + '/user/getmarkname',
+						data: {
+							uid: this.uid,
+							fid: this.id,
+							token: this.token,
+						},
+						method: 'POST',
+						success: (data) => {
+							let status = data.data.status;
+							if (status == 200) {
+								let res = data.data.result;
+								if (!typeof(res.markname)) {
+									//如果存在就替换
+									this.markname = res.markname;
+								}
+							}else if(status == 500){
+								uni.showToast({
+									title: '服务器出错',
+									icon: 'none',
+									duration: 2000
+								});
+							}else if(status == 300) {
+									//token过期
+									uni.navigateTo({
+									    url: '../login/login?name='+this.myname,
+									});
+								}
+						}
+					})
+				}
+				
+			},
+			//性别判断
+			sexJudge: function(e) {
+				if (e == 'female') {
+					this.index=1;
+				} else if (e == 'male') {
+					this.index=0;
+				} else {
+					this.index=2;
+				}
+			},
 			//图片裁剪
 			upload() {
 			            uni.chooseImage({
@@ -173,21 +314,34 @@
 			        confirm(e) {
 			              this.tempFilePath = "";
 			              this.cropFilePath = e.detail.tempFilePath;
-			        
+						this.headimg=e.detail.tempFilePath;
+						console.log(e)
 			              // #ifdef APP-PLUS||MP
 			              //除了H5端返回base64数据外，其他端都是返回临时地址，所以你要判断base64还是临时文件名，（用条件编译APP-PLUS||MP执行编译。）
 			              //按我这里是先上传裁剪得来的临时文件地址然后得到临时文件名，
 			              //待活你要判断是H5还是其他端传给后端类型参数让后端判断执行何种情况代码就OK了
 			        
 			              uni.uploadFile({
-			                url: "后端地址上传图片接口地址",
-			                filePath: this.cropFilePath,
+			                url: this.serverUrl +"/files/upload",   //后端接口地址
+			                filePath: this.headimg,
 			                name: "file",
 			                fileType: "image",
-			                //formData:{},传递参数
+			                formData:{
+								url:'user',
+								name:this.uid,
+								token:this.token,
+							},           //传递参数
 			                success: (uploadFileRes) => {
 			                  var backstr = uploadFileRes.data;
-			                  //自定义操作
+			                  //存储用户信息修改
+			                  try {
+			                    uni.setStorageSync('user', {'id':this.uid,'username':this.myname,'imgurl':backstr,'token':this.token});
+			                  	
+			                  } catch (e) {
+			                      // error
+			                  	console.log('数据存储出错')
+			                  }
+							  this.update(backstr,'imgurl');
 			                },
 			        
 			                fail(e) {
@@ -203,7 +357,11 @@
 			            },
 			    
 			bindDateChange: function(e) {
-				this.date = e.target.value
+			
+					this.date = e.target.value
+					this.update(this.date,'birth')
+				
+				
 			},
 			//获取日期
 			getDate(type) {
@@ -223,6 +381,13 @@
 			},
 			bindPickerChange: function(e) {
 				this.index = e.target.value
+				let sex='asexual';
+				if(this.index==0){
+					sex='male'
+				}else if(this.index==1){
+					sex='female';
+				}
+				this.update(sex,'sex')
 			},
 			getElementStyle: function() {
 				const query = uni.createSelectorQuery().in(this);
@@ -232,25 +397,82 @@
 				}).exec();
 			},
 			//修改项动画
-			modify:function(type,data,ispwd){
-				this.ispwd =ispwd;
-				this.modifyTitle=type;
-				this.data=data;
-				this.isModify=!this.isModify;
-				var animation = uni.createAnimation({
-					duration: 300,
-					timingFunction: 'ease',
-				})
-				if(this.isModify){
-					animation.bottom(0).step()
-				}else{
-					animation.bottom(-this.modifyHeight).step()
+			modify:function(t,type,data,ispwd){
+				if(this.id==this.uid){
+					this.ispwd =ispwd;
+					if(this.ispwd==true){
+						this.pwd=''
+					}
+					this.type=t;
+					this.modifyTitle=type;
+					this.data=data;
+					this.isModify=!this.isModify;
+					var animation = uni.createAnimation({
+						duration: 300,
+						timingFunction: 'ease',
+					})
+					if(this.isModify){
+						animation.bottom(0).step()
+					}else{
+						animation.bottom(-this.modifyHeight).step()
+					}
+					this.animationData = animation.export()
 				}
-				this.animationData = animation.export()
+				
 			},
 			//弹出修改确定
 			modifySubmit:function(){
+				
+				//提交修改
+				if(this.data.length>0){
+					this.update(this.data,this.type,this.pwd)
+					this.user[this.type]=this.data;
+				}
 				this.modify();
+			},
+			//修改数据
+			update:function(data,type,pwd){
+				uni.request({
+					url: this.serverUrl + '/user/update',
+					data: {
+						id: this.uid,
+						data: data,
+						type:type,
+						pwd:pwd,
+						token: this.token,
+					},
+					method: 'POST',
+					success: (data) => {
+						let status = data.data.status;
+						if (status == 200) {
+							let res = data.data;
+							console.log(res)
+						}else if(status == 500){
+							uni.showToast({
+								title: '服务器出错',
+								icon: 'none',
+								duration: 2000
+							});
+						}else if(status == 400){
+							uni.showToast({
+								title: '密码错误',
+								icon: 'none',
+								duration: 2000
+							});
+						}else if(status == 600){
+							uni.showToast({
+								title: '已被占用',
+								icon: 'none',
+								duration: 2000
+							});
+						}else if(status == 300) {
+								//token过期
+								uni.navigateTo({
+								    url: '../login/login?name='+this.myname,
+								});
+							}
+					}
+				})
 			},
 			//处理时间
 			changeTime:function(date){
@@ -259,8 +481,8 @@
 			
 			
 			toLogin: function() {
-				uni.navigateBack({
-					delta: 1
+				uni.navigateTo({
+					url: '../userhome/userhome?id='+this.id,
 				});
 			},
 		}

@@ -6,7 +6,7 @@
 			</view>
 		</view>
 		<view class="logo">
-			<image src="../../static/images/img/enterprise.jpg" ></image>
+			<image src="../../static/images/img/333.jpg" ></image>
 		</view>
 		<view class="main">
 			<view class="title">注册</view>
@@ -257,9 +257,9 @@
 	.logo {
 		text-align: center;
 		image{
-			padding-top: 256rpx;
-			width: 300rpx;
-			height: 200rpx;
+			padding-top: 100rpx;
+			width: 500rpx;
+			height: 400rpx;
 			margin:0 auto;
 		}
 		

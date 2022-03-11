@@ -4,8 +4,8 @@
 			<view class="top-bar-left" @tap="backone">
 				<image src="../../static/images/common/back.png" class="backimg"></image>
 			</view>
-			<view class="top-bar-right" @tap="">
-				<view class="more-img" v-if="relation==0||relation==1">
+			<view class="top-bar-right" >
+				<view class="more-img" v-if="relation==0||relation==1" @tap="userDetail">
 					<image src="../../static/images/userhome/more.png"></image>
 				</view>
 
@@ -56,7 +56,7 @@
 				relation: '', //用户关系 0自己  1好友  2陌生人
 				seximg: '../../static/images/userhome/female.png',
 				sexBg: 'rgba(255,93,91,1)',
-				addHeight: '',
+				addHeight: '1000',
 				msg:'',     //请求信息
 				animationData: {},
 				animationData1: {},
@@ -67,11 +67,15 @@
 
 			}
 		},
+		onShow(){
+			
+		},
 		onLoad(e) {
 			this.id = e.id;
 			this.getStorages();
 			this.getUser();
 			this.judgeFriend();
+			
 		},
 		onReady() {
 			this.getElementStyle();
@@ -158,9 +162,12 @@
 			},
 			//判断用户关系
 			judgeFriend: function() {
+				
 				if (this.id == this.uid) {
+					uni.setStorageSync('id',this.uid);
 					this.relation = 0;
 				} else {
+					uni.setStorageSync('id',this.id);
 					//如果不是自己,进行后端访问验证
 					uni.request({
 						url: this.serverUrl + '/search/isfriend',
@@ -175,7 +182,7 @@
 							if (status == 200) {
 								//好友
 								this.relation = 1;
-								console.log(this.relation)
+								// console.log(this.relation)
 								this.getMarkName();
 							} else if (status == 400) {
 								//陌生人
@@ -326,6 +333,12 @@
 					})
 				}
 			},
+			//跳转到用户详情
+			userDetail:function(){
+				uni.switchTab({
+				    url: '../userdetails/userdetails?id='+this.id,
+				});
+			}
 		}
 	}
 </script>
