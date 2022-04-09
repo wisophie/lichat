@@ -20,7 +20,7 @@
 						<view class="email">{{item.email}}</view>
 					</view>
 					</navigator>
-					<view class="right-bt send" v-if="item.tip==1">发消息</view>
+					<view class="right-bt send" v-if="item.tip==1" @tap="tochatroom(item)">发消息</view>
 					<view class="right-bt add" v-if="item.tip==0" @tap="addFriendBtn(item._id)">加好友</view>
 				</view>
 			</view>
@@ -255,6 +255,11 @@
 				    delta:1
 				});
 			},
+			tochatroom:function(item){
+				uni.navigateTo({
+				    url: '../chatroom/chatroom?id='+item._id+'&name='+item.name+'&img='+item.imgurl+'&type=0',
+				});
+			}
 			
 		}
 	}

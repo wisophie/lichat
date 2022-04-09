@@ -468,14 +468,16 @@ var render = function() {
                       attrs: { _i: "33-" + $30 }
                     },
                     [
-                      _c(
-                        "v-uni-text",
-                        {
-                          staticClass: _vm._$g("34-" + $30, "sc"),
-                          attrs: { _i: "34-" + $30 }
-                        },
-                        [_vm._v(_vm._$g("34-" + $30, "t0-0"))]
-                      ),
+                      _vm._$g("34-" + $30, "i")
+                        ? _c(
+                            "v-uni-text",
+                            {
+                              staticClass: _vm._$g("34-" + $30, "sc"),
+                              attrs: { _i: "34-" + $30 }
+                            },
+                            [_vm._v(_vm._$g("34-" + $30, "t0-0"))]
+                          )
+                        : _vm._e(),
                       _c("v-uni-image", {
                         attrs: {
                           src: _vm._$g("35-" + $30, "a-src"),
@@ -2043,7 +2045,12 @@ var render = function() {
                           "v-uni-view",
                           {
                             staticClass: _vm._$g("16-" + $30, "sc"),
-                            attrs: { _i: "16-" + $30 }
+                            attrs: { _i: "16-" + $30 },
+                            on: {
+                              click: function($event) {
+                                return _vm.$handleViewEvent($event)
+                              }
+                            }
                           },
                           [_vm._v("发消息")]
                         )
@@ -2470,7 +2477,15 @@ var render = function() {
           _vm._$g(21, "i")
             ? _c(
                 "v-uni-view",
-                { staticClass: _vm._$g(21, "sc"), attrs: { _i: 21 } },
+                {
+                  staticClass: _vm._$g(21, "sc"),
+                  attrs: { _i: 21 },
+                  on: {
+                    click: function($event) {
+                      return _vm.$handleViewEvent($event)
+                    }
+                  }
+                },
                 [_vm._v("发送消息")]
               )
             : _vm._e()
@@ -4657,14 +4672,30 @@ var render = function() {
           _vm._$g(62, "i")
             ? _c(
                 "v-uni-view",
-                { staticClass: _vm._$g(62, "sc"), attrs: { _i: 62 } },
+                {
+                  staticClass: _vm._$g(62, "sc"),
+                  attrs: { _i: 62 },
+                  on: {
+                    click: function($event) {
+                      return _vm.$handleViewEvent($event)
+                    }
+                  }
+                },
                 [_vm._v("退出登录")]
               )
             : _vm._e(),
           _vm._$g(63, "i")
             ? _c(
                 "v-uni-view",
-                { staticClass: _vm._$g(63, "sc"), attrs: { _i: 63 } },
+                {
+                  staticClass: _vm._$g(63, "sc"),
+                  attrs: { _i: 63 },
+                  on: {
+                    click: function($event) {
+                      return _vm.$handleViewEvent($event)
+                    }
+                  }
+                },
                 [_vm._v("删除好友")]
               )
             : _vm._e()

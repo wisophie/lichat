@@ -102,8 +102,8 @@
 					</view>
 				</view>
 			</view>
-			<view class="bt2" v-if="id==uid">退出登录</view>
-			<view class="bt2" v-if="id!=uid">删除好友</view>
+			<view class="bt2" v-if="id==uid"@tap="quit">退出登录</view>
+			<view class="bt2" v-if="id!=uid"@tap="deleteFriend">删除好友</view>
 		</view>
 		<view class="modify" :style="{bottom:-+modifyHeight+'px'}" :animation="animationData">
 			<view class="modify-header">
@@ -304,7 +304,7 @@
 			upload() {
 			            uni.chooseImage({
 			                count: 1, //默认9
-			                sizeType: ['original', 'compressed'], //可以指定是原图还是压缩图，默认二者都有
+			                sizeType: ['compressed'], //可以指定是原图还是压缩图，默认二者都有
 			                sourceType: ['album','camera'], //从相册和相机选择
 			                success: (res) => {
 			                    this.tempFilePath = res.tempFilePaths.shift()
@@ -315,39 +315,47 @@
 			              this.tempFilePath = "";
 			              this.cropFilePath = e.detail.tempFilePath;
 						this.headimg=e.detail.tempFilePath;
-						console.log(e)
+						// console.log(e)
 			              // #ifdef APP-PLUS||MP
 			              //除了H5端返回base64数据外，其他端都是返回临时地址，所以你要判断base64还是临时文件名，（用条件编译APP-PLUS||MP执行编译。）
 			              //按我这里是先上传裁剪得来的临时文件地址然后得到临时文件名，
 			              //待活你要判断是H5还是其他端传给后端类型参数让后端判断执行何种情况代码就OK了
-			        
-			              uni.uploadFile({
-			                url: this.serverUrl +"/files/upload",   //后端接口地址
-			                filePath: this.headimg,
-			                name: "file",
-			                fileType: "image",
-			                formData:{
-								url:'user',
-								name:this.uid,
-								token:this.token,
-							},           //传递参数
-			                success: (uploadFileRes) => {
-			                  var backstr = uploadFileRes.data;
-			                  //存储用户信息修改
-			                  try {
-			                    uni.setStorageSync('user', {'id':this.uid,'username':this.myname,'imgurl':backstr,'token':this.token});
-			                  	
-			                  } catch (e) {
-			                      // error
-			                  	console.log('数据存储出错')
-			                  }
-							  this.update(backstr,'imgurl');
-			                },
-			        
-			                fail(e) {
-			                  console.log("this is errormes " + e.message);
-			                },
-			              });
+			              uni.compressImage({
+			                src: this.headimg,
+			                quality: 30,
+			                success: res => {
+			                  // console.log(res.tempFilePath)
+							  uni.uploadFile({
+							    url: this.serverUrl +"/files/upload",   //后端接口地址
+							    filePath: res.tempFilePath,
+							    name: "file",
+							    fileType: "image",
+							    formData:{
+							  								url:'user',
+							  								name:this.uid,
+							  								token:this.token,
+							  							},           //传递参数
+							    success: (uploadFileRes) => {
+							      var backstr = uploadFileRes.data;
+							  							  
+							      //存储用户信息修改
+							      try {
+							        uni.setStorageSync('user', {'id':this.uid,'username':this.myname,'imgurl':backstr,'token':this.token});
+							      	
+							      } catch (e) {
+							          // error
+							      	console.log('数据存储出错')
+							      }
+							  							  this.update(backstr,'imgurl');
+							    },
+							  			        
+							    fail(e) {
+							      console.log("this is errormes " + e.message);
+							    },
+							  });
+			                }
+			              })
+			              
 			        
 			              // #endif
 			            },
@@ -446,7 +454,20 @@
 						let status = data.data.status;
 						if (status == 200) {
 							let res = data.data;
-							console.log(res)
+							if(type=='pwd'){
+								//用户需要重新登录
+								//清除缓存
+								uni.removeStorage({
+									key: 'user',
+									success: function (res) {
+										console.log('success');
+									}
+								});
+								uni.navigateTo({
+								    url: '../login/login?name='+this.myname,
+								});
+							}
+							// console.log(res)
 						}else if(status == 500){
 							uni.showToast({
 								title: '服务器出错',
@@ -485,6 +506,61 @@
 					url: '../userhome/userhome?id='+this.id,
 				});
 			},
+			quit:function(){
+				uni.removeStorage({
+					key: 'user',
+					success: function (res) {
+						
+					}
+				});
+				uni.navigateTo({
+				    url: '../login/login',
+				});
+			},
+			//删除好友
+			deleteFriend:function(){
+				uni.showModal({
+					title: '提示',
+					content: '确定删除该好友吗?',
+					success: (res) => {
+						if (res.confirm) {
+							uni.request({
+								url: this.serverUrl + '/friend/deletefriend',
+								data: {
+									uid: this.uid,
+									fid: this.id,
+									token: this.token,
+								},
+								method: 'POST',
+								success: (data) => {
+									let status = data.data.status;
+									if (status == 200) {
+										let res = data.data.result;
+										uni.switchTab({
+										    url: '../index/index',
+										});
+										// console.log(data.data)
+									}else if(status == 500){
+										uni.showToast({
+											title: '服务器出错',
+											icon: 'none',
+											duration: 2000
+										});
+									}else if(status == 300) {
+											//token过期
+											uni.navigateTo({
+											    url: '../login/login?name='+this.myname,
+											});
+										}
+								}
+							})
+							// console.log('用户点击确定');
+						} else if (res.cancel) {
+							// console.log('用户点击取消');
+						}
+					}
+				});
+			}
 		}
 	}
 </script>

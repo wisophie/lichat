@@ -49,7 +49,7 @@
 			<view class="friends">
 				<view class="friends-list" v-for="(item,index) in friends" :key="item.id" @tap="tochatroom(item)">
 					<view class="friends-list-l">
-						<text class="tip">{{item.tip}}</text>
+						<text class="tip" v-if="item.tip>0">{{item.tip}}</text>
 						<image :src="item.imgurl"></image>
 					</view>
 					<view class="friends-list-r">
@@ -86,7 +86,7 @@
 			}
 		},
 		onShow() {
-			
+		
 		},
 		onLoad() {
 			this.getStorages();
@@ -94,6 +94,7 @@
 			this.friendRequest();
 			this.join(this.uid);
 			this.receiveSocketMsg();
+			
 			// this.getFriends1();
 		},
 		onPullDownRefresh() {
@@ -333,6 +334,7 @@
 							let e=arr[i];
 							e.tip=res;
 							arr.splice(i,1,e);
+							// console.log(data.data)
 						} else if (status == 500) {
 							uni.showToast({
 								title: '服务器出错',

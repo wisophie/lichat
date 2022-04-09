@@ -325,6 +325,7 @@
                 ctx.draw(false, () => {
 				
                     uni.canvasToTempFilePath({
+						fileType: 'jpg',
                         canvasId: 'myCanvas',
                         destWidth: _this.cropW * pixelRatio,
                         destHeight: _this.cropH * pixelRatio,

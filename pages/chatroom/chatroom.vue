@@ -82,6 +82,7 @@
 			this.getStorages();
 			this.getMsg();
 			this.receiveSocketMsg();
+			this.updateunreadMsg();
 			//this.nextPage();
 		},
 		components:{
@@ -160,7 +161,7 @@
 						let status = data.data.status;
 						if (status == 200) {
 							let msg=data.data.result;
-							console.log(msg)
+							// console.log(msg)
 							msg.reverse();
 							let oldtime =msg[0].time;
 							let imgarr=[];
@@ -369,6 +370,36 @@
 					}
 					
 					// console.log(msg+'是'+fromid)
+				})
+			},
+			updateunreadMsg:function(){
+				uni.request({
+					url: this.serverUrl + '/index/updatemsg',
+					data: {
+						uid: this.uid,
+						fid:this.fid,
+						token: this.token,
+					},
+					method: 'POST',
+					success: (data) => {
+						let status = data.data.status;
+						if (status == 200) {
+							let res=data.data.result;
+							
+						 // console.log(data.data)
+						} else if (status == 500) {
+							uni.showToast({
+								title: '服务器出错',
+								icon: 'none',
+								duration: 2000
+							});
+						}else if (status == 300) {
+							//token过期
+							uni.navigateTo({
+							    url: '../login/login?name='+this.myname,
+							});
+						}
+					}
 				})
 			},
 			//接收高度

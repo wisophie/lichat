@@ -20,7 +20,7 @@
 		                 background-color: 0px 1px 0px 0px rgba(0, 0, 0, 0.1)!important; // tabBar 上边框的颜色
 		             }
 		 .uni-tabbar__label { // tabBar 文字
-		                    font-size: 16px !important;
+		                    font-size:16px !important;
 		                }
 	}
 </style>

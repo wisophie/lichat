@@ -30,7 +30,7 @@
 		</view>
 		<view class="button-bar">
 			<view class="btn1 btn" @tap="addFriendBtn" v-if="relation==2">加为好友</view>
-			<view class="btn1 btn" v-if="relation==1">发送消息</view>
+			<view class="btn1 btn" v-if="relation==1" @tap="tochatroom(user)">发送消息</view>
 		</view>
 		<view class="add-misg" :style="{height:addHeight+'px',bottom:-+addHeight+'px'}" :animation="animationData">
 			<view class="name">{{user.name}}</view>
@@ -337,6 +337,11 @@
 			userDetail:function(){
 				uni.switchTab({
 				    url: '../userdetails/userdetails?id='+this.id,
+				});
+			},
+			tochatroom:function(user){
+				uni.navigateTo({
+				    url: '../chatroom/chatroom?id='+this.id+'&name='+user.name+'&img='+user.imgurl+'&type=0',
 				});
 			}
 		}
